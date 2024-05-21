@@ -111,6 +111,7 @@ const deleteSingleProduct = async (req: Request, res: Response) => {
 const createOrder = async (req: Request, res: Response) => {
     try {
         const orderData = req.body;
+        console.log(orderData, "1st");
         const result = await ProductServices.createOrderFromDB(orderData)
 
         res.status(200).json({
@@ -118,9 +119,8 @@ const createOrder = async (req: Request, res: Response) => {
             message: "Order created successfully!",
             data: result
         })
-        console.log(orderData);
     } catch (error) {
-        console.log(error);
+
         res.status(200).json({
             success: false,
             message: "Failed to create Order",
@@ -131,7 +131,8 @@ const createOrder = async (req: Request, res: Response) => {
 
 const getOrders = async (req: Request, res: Response) => {
       try {
-        const result = await ProductServices.getOrderFromDB();
+        const searchEmailParams = req.query.email
+        const result = await ProductServices.getOrderFromDB(searchEmailParams);
 
         res.status(200).json({
             success: true,

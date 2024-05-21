@@ -41,13 +41,41 @@ const deleteSingleProductFromDB = async (id: string) => {
 }
 
 const createOrderFromDB = async (orderData: TOrder) => {
-    console.log(orderData);
+    
+    const {productId, quantity} = orderData;
+
+    let product = await Product.findOne({_id: productId});
+
+    if(!product){
+        throw Error("Product not Found")
+    }
+
+    if (product.inventory.quantity < quantity) {
+        throw Error('Insufficient quantity');
+    }
+
+    product.inventory.quantity -= quantity
+
+    if(product.inventory.quantity === 0){
+        product.inventory.inStock = false
+    }
+
+
+    await product.save();
     const result = await Order.create(orderData)
     return result
 }
 
-const getOrderFromDB = async () => {
-    const result = await Order.find()
+
+const getOrderFromDB = async (email: any) => {
+    let query = {}
+
+    if(email){
+        query = {email: {$regex: new RegExp(email, 'i')}}
+    }
+
+    const result = await Order.find(query)
+    console.log(result);
     return result
 }
 
