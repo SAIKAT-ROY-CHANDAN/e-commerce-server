@@ -25,7 +25,9 @@ const createProduct = async (req: Request, res: Response) => {
 
 const getStudents = async (req: Request, res: Response) => {
     try {
-        const result = await ProductServices.getProductFromDB();
+        const searchParams = req.query.searchTerm;
+        console.log(searchParams);
+        const result = await ProductServices.getProductFromDB(searchParams);
 
         res.status(200).json({
             success: true,
@@ -89,7 +91,7 @@ const updateSingleProduct = async (req: Request, res: Response) => {
 const deleteSingleProduct = async (req: Request, res: Response) => {
     try {
         const { productsId } = req.params;
-        const result = await ProductServices.deleteSingleProductFromDB(productsId);
+        await ProductServices.deleteSingleProductFromDB(productsId);
         
         res.status(200).json({
             success: true,
