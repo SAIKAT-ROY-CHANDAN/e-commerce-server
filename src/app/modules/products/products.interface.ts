@@ -17,3 +17,10 @@ export type TProduct = {
     variants: TVariants[];
     inventory: TInventory;
 }
+
+export type TOrder = {
+    email: string;
+    productId: string;
+    price: number;
+    quantity: number;
+}

@@ -26,7 +26,7 @@ const createProduct = async (req: Request, res: Response) => {
 const getStudents = async (req: Request, res: Response) => {
     try {
         const searchParams = req.query.searchTerm;
-        console.log(searchParams);
+
         const result = await ProductServices.getProductFromDB(searchParams);
 
         res.status(200).json({
@@ -35,7 +35,6 @@ const getStudents = async (req: Request, res: Response) => {
             data: result
         })
     } catch (error) {
-        console.log(error);
         res.status(500).json({
             success: false,
             message: "Something Have gone wrong",
@@ -109,10 +108,53 @@ const deleteSingleProduct = async (req: Request, res: Response) => {
 
 }
 
+const createOrder = async (req: Request, res: Response) => {
+    try {
+        const orderData = req.body;
+        const result = await ProductServices.createOrderFromDB(orderData)
+
+        res.status(200).json({
+            success: true,
+            message: "Order created successfully!",
+            data: result
+        })
+        console.log(orderData);
+    } catch (error) {
+        console.log(error);
+        res.status(200).json({
+            success: false,
+            message: "Failed to create Order",
+            error: error
+        })
+    }
+}
+
+const getOrders = async (req: Request, res: Response) => {
+      try {
+        const result = await ProductServices.getOrderFromDB();
+
+        res.status(200).json({
+            success: true,
+            message: "Orders fetched successfully!",
+            data: result
+        })
+        return result
+      } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: true,
+            message: "Failed to fetched Orders!",
+            error: error
+        })
+      }
+}
+
 export default {
     createProduct,
     getStudents,
     getSingleProduct,
     updateSingleProduct,
-    deleteSingleProduct
+    deleteSingleProduct,
+    createOrder,
+    getOrders
 }

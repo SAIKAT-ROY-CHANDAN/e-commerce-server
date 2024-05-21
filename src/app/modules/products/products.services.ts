@@ -1,5 +1,6 @@
-import { TProduct } from "./products.interface";
-import Product from "./products.model";
+import { TOrder, TProduct } from "./products.interface";
+import { Order, Product } from "./products.model";
+
 
 const createProductIntoDB = async (productData: TProduct) => {
     const result = await Product.create(productData)
@@ -39,10 +40,23 @@ const deleteSingleProductFromDB = async (id: string) => {
     return result
 }
 
+const createOrderFromDB = async (orderData: TOrder) => {
+    console.log(orderData);
+    const result = await Order.create(orderData)
+    return result
+}
+
+const getOrderFromDB = async () => {
+    const result = await Order.find()
+    return result
+}
+
 export const ProductServices = {
     createProductIntoDB,
     getProductFromDB,
     getSingleProductFromDB,
     updateSingleProductFromDB,
-    deleteSingleProductFromDB
+    deleteSingleProductFromDB,
+    createOrderFromDB,
+    getOrderFromDB
 }
