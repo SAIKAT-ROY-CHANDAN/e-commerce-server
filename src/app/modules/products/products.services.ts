@@ -12,22 +12,26 @@ const getProductFromDB = async () => {
     return result
 }
 
-const getSingleProductFromDb = async (id: string) => {
+const getSingleProductFromDB = async (id: string) => {
     const result = await Product.findOne({ _id: id })
     return result
 }
 
-const updateSingleProductFromDb = async (id: string, updateData: any) => {
-    console.log(updateData);
+const updateSingleProductFromDB = async (id: string, updateData: any) => {
     const result = await Product.findOneAndUpdate(
-        { _id: id }, { $set: { field: updateData } }, { new: true })
-        console.log(result);
+        { _id: id }, updateData,  { new: true })
+    return result
+}
+
+const deleteSingleProductFromDB = async (id: string) => {
+    const result = await Product.findOneAndDelete({_id: id})
     return result
 }
 
 export const ProductServices = {
     createProductIntoDB,
     getProductFromDB,
-    getSingleProductFromDb,
-    updateSingleProductFromDb
+    getSingleProductFromDB,
+    updateSingleProductFromDB,
+    deleteSingleProductFromDB
 }

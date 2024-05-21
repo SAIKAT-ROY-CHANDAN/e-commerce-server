@@ -46,7 +46,7 @@ const getSingleProduct = async (req: Request, res: Response) => {
     try {
         const { productsId } = req.params;
 
-        const result = await ProductServices.getSingleProductFromDb(productsId)
+        const result = await ProductServices.getSingleProductFromDB(productsId)
 
         res.status(200).json({
             success: true,
@@ -68,7 +68,7 @@ const updateSingleProduct = async (req: Request, res: Response) => {
         const updateData = req.body;
         const { productsId } = req.params;
 
-        const result = await ProductServices.updateSingleProductFromDb(productsId, updateData)
+        const result = await ProductServices.updateSingleProductFromDB(productsId, updateData)
 
         res.status(200).json({
             success: true,
@@ -86,9 +86,31 @@ const updateSingleProduct = async (req: Request, res: Response) => {
 
 }
 
+const deleteSingleProduct = async (req: Request, res: Response) => {
+    try {
+        const { productsId } = req.params;
+        const result = await ProductServices.deleteSingleProductFromDB(productsId);
+        
+        res.status(200).json({
+            success: true,
+            message: "Product deleted successfully!",
+            data: null
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            success: false,
+            message: "There was some problem to delete the Product!",
+            error: error
+        })
+    }
+
+}
+
 export default {
     createProduct,
     getStudents,
     getSingleProduct,
-    updateSingleProduct
+    updateSingleProduct,
+    deleteSingleProduct
 }
