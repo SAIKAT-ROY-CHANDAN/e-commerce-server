@@ -1,11 +1,14 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./products.services";
+import { orderValidationSchema, productValidationSchema } from "./products.valiations";
+import { z } from "zod";
 
 const createProduct = async (req: Request, res: Response) => {
     try {
         const ProductData = req.body;
 
-        const result = await ProductServices.createProductIntoDB(ProductData)
+        const zodParsedData = productValidationSchema.parse(ProductData)
+        const result = await ProductServices.createProductIntoDB(zodParsedData)
 
         res.status(200).json({
             success: true,
@@ -69,7 +72,8 @@ const updateSingleProduct = async (req: Request, res: Response) => {
         const updateData = req.body;
         const { productsId } = req.params;
 
-        const result = await ProductServices.updateSingleProductFromDB(productsId, updateData)
+        const zodParseUpdatedData = productValidationSchema.parse(updateData)
+        const result = await ProductServices.updateSingleProductFromDB(productsId, zodParseUpdatedData)
 
         res.status(200).json({
             success: true,
@@ -91,7 +95,7 @@ const deleteSingleProduct = async (req: Request, res: Response) => {
     try {
         const { productsId } = req.params;
         await ProductServices.deleteSingleProductFromDB(productsId);
-        
+
         res.status(200).json({
             success: true,
             message: "Product deleted successfully!",
@@ -111,8 +115,8 @@ const deleteSingleProduct = async (req: Request, res: Response) => {
 const createOrder = async (req: Request, res: Response) => {
     try {
         const orderData = req.body;
-        console.log(orderData, "1st");
-        const result = await ProductServices.createOrderFromDB(orderData)
+        const zodOrderParsedData = orderValidationSchema.parse(orderData)
+        const result = await ProductServices.createOrderFromDB(zodOrderParsedData)
 
         res.status(200).json({
             success: true,
@@ -121,16 +125,29 @@ const createOrder = async (req: Request, res: Response) => {
         })
     } catch (error) {
 
-        res.status(200).json({
-            success: false,
-            message: "Failed to create Order",
-            error: error
-        })
+// To handle multiple error and send appropriate response error i have implement the if else condition to handle gracefully.
+
+        if ((error as Error).message === 'Product not Found') {
+            res.status(404).json({
+                success: false,
+                message: (error as Error).message
+            });
+        } else if ((error as Error).message === 'Insufficient quantity available in inventory') {
+            res.status(400).json({
+                success: false,
+                message: (error as Error).message
+            });
+        } else {
+            res.status(500).json({
+                success: false,
+                message: 'Failed to create order',
+            })
+        }
     }
 }
 
 const getOrders = async (req: Request, res: Response) => {
-      try {
+    try {
         const searchEmailParams = req.query.email
         const result = await ProductServices.getOrderFromDB(searchEmailParams);
 
@@ -140,14 +157,13 @@ const getOrders = async (req: Request, res: Response) => {
             data: result
         })
         return result
-      } catch (error) {
+    } catch (error) {
         console.log(error);
         res.status(500).json({
-            success: true,
-            message: "Failed to fetched Orders!",
-            error: error
+            success: false,
+            message: "Order not found!",
         })
-      }
+    }
 }
 
 export default {

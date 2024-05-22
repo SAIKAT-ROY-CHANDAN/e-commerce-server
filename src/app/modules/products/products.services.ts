@@ -40,18 +40,16 @@ const deleteSingleProductFromDB = async (id: string) => {
     return result
 }
 
-const createOrderFromDB = async (orderData: TOrder) => {
-    
+const createOrderFromDB = async (orderData: TOrder) => {   
     const {productId, quantity} = orderData;
-
     let product = await Product.findOne({_id: productId});
 
     if(!product){
-        throw Error("Product not Found")
+        throw new Error("Product not Found")
     }
 
     if (product.inventory.quantity < quantity) {
-        throw Error('Insufficient quantity');
+        throw new Error ('Insufficient quantityInsufficient quantity available in inventory')
     }
 
     product.inventory.quantity -= quantity
@@ -60,14 +58,19 @@ const createOrderFromDB = async (orderData: TOrder) => {
         product.inventory.inStock = false
     }
 
-
     await product.save();
     const result = await Order.create(orderData)
     return result
 }
 
-
 const getOrderFromDB = async (email: any) => {
+
+    let existingEmail = await Order.findOne({email: email});
+
+    if(!existingEmail){
+        throw new Error("Email does not exist")
+    }
+
     let query = {}
 
     if(email){
@@ -75,7 +78,6 @@ const getOrderFromDB = async (email: any) => {
     }
 
     const result = await Order.find(query)
-    console.log(result);
     return result
 }
 
