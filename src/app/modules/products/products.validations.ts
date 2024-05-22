@@ -21,11 +21,6 @@ const productValidationSchema = z.object({
     inventory: inventoryValidationSchema,
 });
 
-const orderValidationSchema = z.object({
-    email: z.string().email(),
-    productId: z.string(),
-    price: z.number(),
-    quantity: z.number(),
-});
 
-export {productValidationSchema, orderValidationSchema}
+
+export default productValidationSchema

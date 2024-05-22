@@ -1,5 +1,8 @@
-import { TOrder, TProduct } from "./products.interface";
-import { Order, Product } from "./products.model";
+import { TOrder } from "../orders/order.interface";
+import Order from "../orders/order.model";
+import { TProduct } from "./products.interface";
+import Product from "./products.model";
+
 
 
 const createProductIntoDB = async (productData: TProduct) => {
@@ -45,47 +48,6 @@ const deleteSingleProductFromDB = async (id: string) => {
     return result
 }
 
-const createOrderFromDB = async (orderData: TOrder) => {
-    const { productId, quantity } = orderData;
-    let product = await Product.findOne({ _id: productId });
-
-    if (!product) {
-        throw new Error("Product not Found")
-    }
-
-    if (product.inventory.quantity < quantity) {
-        throw new Error('Insufficient quantityInsufficient quantity available in inventory')
-    }
-
-    product.inventory.quantity -= quantity
-
-    if (product.inventory.quantity === 0) {
-        product.inventory.inStock = false
-    }
-
-    await product.save();
-    const result = await Order.create(orderData)
-    return result
-}
-
-const getOrderFromDB = async (email: any) => {
-
-    let query = {}
-
-    if (email) {
-        // query = {email: {$regex: new RegExp(email, 'i')}}
-        query = { email: email }
-    }
-
-    const result = await Order.find(query)
-
-    if (result.length === 0) {
-        throw new Error('Result not found')
-    }
-
-
-    return result
-}
 
 export const ProductServices = {
     createProductIntoDB,
@@ -93,6 +55,4 @@ export const ProductServices = {
     getSingleProductFromDB,
     updateSingleProductFromDB,
     deleteSingleProductFromDB,
-    createOrderFromDB,
-    getOrderFromDB
 }

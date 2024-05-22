@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./products.services";
-import { orderValidationSchema, productValidationSchema } from "./products.valiations";
+import productValidationSchema from "./products.validations";
+
 
 
 const createProduct = async (req: Request, res: Response) => {
@@ -111,59 +112,7 @@ const deleteSingleProduct = async (req: Request, res: Response) => {
 
 }
 
-const createOrder = async (req: Request, res: Response) => {
-    try {
-        const orderData = req.body;
-        const zodOrderParsedData = orderValidationSchema.parse(orderData)
-        const result = await ProductServices.createOrderFromDB(zodOrderParsedData)
 
-        res.status(200).json({
-            success: true,
-            message: "Order created successfully!",
-            data: result
-        })
-    } catch (error) {
-
-// To handle multiple error and send appropriate response error i have implement the if else condition to handle gracefully.
-
-        if ((error as Error).message === 'Product not Found') {
-            res.status(404).json({
-                success: false,
-                message: (error as Error).message
-            });
-        } else if ((error as Error).message === 'Insufficient quantity available in inventory') {
-            res.status(400).json({
-                success: false,
-                message: (error as Error).message
-            });
-        } else {
-            res.status(500).json({
-                success: false,
-                message: 'Failed to create order',
-            })
-        }
-    }
-}
-
-const getOrders = async (req: Request, res: Response) => {
-    try {
-        const searchEmailParams = req.query.email
-        const result = await ProductServices.getOrderFromDB(searchEmailParams);
-
-        res.status(200).json({
-            success: true,
-            message: "Orders fetched successfully!",
-            data: result
-        })
-        return result
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            success: false,
-            message: "Order not found!",
-        })
-    }
-}
 
 export default {
     createProduct,
@@ -171,6 +120,4 @@ export default {
     getSingleProduct,
     updateSingleProduct,
     deleteSingleProduct,
-    createOrder,
-    getOrders
 }
