@@ -21,6 +21,11 @@ const getProductFromDB = async (searchParams?: any) => {
     }
 
     const result = await Product.find(query)
+
+    if (result.length === 0) {
+        throw new Error('Result not found')
+    }
+    
     return result
 }
 
@@ -40,21 +45,21 @@ const deleteSingleProductFromDB = async (id: string) => {
     return result
 }
 
-const createOrderFromDB = async (orderData: TOrder) => {   
-    const {productId, quantity} = orderData;
-    let product = await Product.findOne({_id: productId});
+const createOrderFromDB = async (orderData: TOrder) => {
+    const { productId, quantity } = orderData;
+    let product = await Product.findOne({ _id: productId });
 
-    if(!product){
+    if (!product) {
         throw new Error("Product not Found")
     }
 
     if (product.inventory.quantity < quantity) {
-        throw new Error ('Insufficient quantityInsufficient quantity available in inventory')
+        throw new Error('Insufficient quantityInsufficient quantity available in inventory')
     }
 
     product.inventory.quantity -= quantity
 
-    if(product.inventory.quantity === 0){
+    if (product.inventory.quantity === 0) {
         product.inventory.inStock = false
     }
 
@@ -65,19 +70,20 @@ const createOrderFromDB = async (orderData: TOrder) => {
 
 const getOrderFromDB = async (email: any) => {
 
-    let existingEmail = await Order.findOne({email: email});
-
-    if(!existingEmail){
-        throw new Error("Email does not exist")
-    }
-
     let query = {}
 
-    if(email){
-        query = {email: {$regex: new RegExp(email, 'i')}}
+    if (email) {
+        // query = {email: {$regex: new RegExp(email, 'i')}}
+        query = { email: email }
     }
 
     const result = await Order.find(query)
+
+    if (result.length === 0) {
+        throw new Error('Result not found')
+    }
+
+
     return result
 }
 

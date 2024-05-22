@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { ProductServices } from "./products.services";
 import { orderValidationSchema, productValidationSchema } from "./products.valiations";
-import { z } from "zod";
+
 
 const createProduct = async (req: Request, res: Response) => {
     try {
@@ -26,7 +26,7 @@ const createProduct = async (req: Request, res: Response) => {
     }
 }
 
-const getStudents = async (req: Request, res: Response) => {
+const getProducts = async (req: Request, res: Response) => {
     try {
         const searchParams = req.query.searchTerm;
 
@@ -41,7 +41,6 @@ const getStudents = async (req: Request, res: Response) => {
         res.status(500).json({
             success: false,
             message: "Something Have gone wrong",
-            error: error
         })
     }
 }
@@ -168,7 +167,7 @@ const getOrders = async (req: Request, res: Response) => {
 
 export default {
     createProduct,
-    getStudents,
+    getProducts,
     getSingleProduct,
     updateSingleProduct,
     deleteSingleProduct,

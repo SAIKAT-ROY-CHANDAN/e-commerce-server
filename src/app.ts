@@ -9,13 +9,6 @@ app.use(cors());
 
 app.use('/api', ProductRoutes)
 
-app.use((req, res) => {
-    res.status(404).json({
-        success: false,
-        message: "Route not found"
-    });
-});
-
 const getController = (req: Request, res: Response) => {
     const a = "hello world";
     res.send(a);
@@ -23,6 +16,12 @@ const getController = (req: Request, res: Response) => {
 
 app.get('/', getController)
 
+app.use((req, res) => {
+    res.status(404).json({
+        success: false,
+        message: "Route not found"
+    });
+});
 export default app;
 
 
